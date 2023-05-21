@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package aiservice.v1;
+
+message PromptInput {
+  string data = 1;
+}
+
+message FileInput {
+  string data = 1;
+}
+
+message PredictRequest {
+  PromptInput prompt_input = 1;
+  FileInput file_input = 2;
+}
+
+message PredictResponse {
+  string result = 1;
+}
+
+service InferenceService {
+  rpc Predict(PredictRequest) returns (PredictResponse) {}
+}
