@@ -12,5 +12,8 @@ plugins:
     opt:
       - paths=source_relative
       - require_unimplemented_servers=false
-  - plugin: buf.build/protocolbuffers/python:v21.9
+#  unable generate valid python code, pyi file is missing for unknown reason
+  - plugin: buf.build/protocolbuffers/python
+    out: gen/python
+  - plugin: buf.build/grpc/python
     out: gen/python

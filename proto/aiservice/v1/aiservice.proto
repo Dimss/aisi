@@ -3,11 +3,11 @@ syntax = "proto3";
 package aiservice.v1;
 
 message PromptInput {
-  string data = 1;
+  string prompt = 1;
 }
 
 message FileInput {
-  string data = 1;
+  string path = 1;
 }
 
 message PredictRequest {
@@ -19,6 +19,21 @@ message PredictResponse {
   string result = 1;
 }
 
+message ReadyRequest {}
+
+message ReadyResponse {
+  bool ready = 1;
+}
+
+message BootstrapRequest{}
+
+message BootstrapResponse{
+  bool ok = 1;
+}
+
+
 service InferenceService {
   rpc Predict(PredictRequest) returns (PredictResponse) {}
+  rpc Ready(ReadyRequest) returns (ReadyResponse) {}
+  rpc Bootstrap(BootstrapRequest) returns (BootstrapResponse){}
 }

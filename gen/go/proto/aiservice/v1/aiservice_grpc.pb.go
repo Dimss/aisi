@@ -19,6 +19,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InferenceServiceClient interface {
 	Predict(ctx context.Context, in *PredictRequest, opts ...grpc.CallOption) (*PredictResponse, error)
+	Ready(ctx context.Context, in *ReadyRequest, opts ...grpc.CallOption) (*ReadyResponse, error)
+	Bootstrap(ctx context.Context, in *BootstrapRequest, opts ...grpc.CallOption) (*BootstrapResponse, error)
 }
 
 type inferenceServiceClient struct {
@@ -38,11 +40,31 @@ func (c *inferenceServiceClient) Predict(ctx context.Context, in *PredictRequest
 	return out, nil
 }
 
+func (c *inferenceServiceClient) Ready(ctx context.Context, in *ReadyRequest, opts ...grpc.CallOption) (*ReadyResponse, error) {
+	out := new(ReadyResponse)
+	err := c.cc.Invoke(ctx, "/aiservice.v1.InferenceService/Ready", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *inferenceServiceClient) Bootstrap(ctx context.Context, in *BootstrapRequest, opts ...grpc.CallOption) (*BootstrapResponse, error) {
+	out := new(BootstrapResponse)
+	err := c.cc.Invoke(ctx, "/aiservice.v1.InferenceService/Bootstrap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InferenceServiceServer is the server API for InferenceService service.
 // All implementations should embed UnimplementedInferenceServiceServer
 // for forward compatibility
 type InferenceServiceServer interface {
 	Predict(context.Context, *PredictRequest) (*PredictResponse, error)
+	Ready(context.Context, *ReadyRequest) (*ReadyResponse, error)
+	Bootstrap(context.Context, *BootstrapRequest) (*BootstrapResponse, error)
 }
 
 // UnimplementedInferenceServiceServer should be embedded to have forward compatible implementations.
@@ -51,6 +73,12 @@ type UnimplementedInferenceServiceServer struct {
 
 func (UnimplementedInferenceServiceServer) Predict(context.Context, *PredictRequest) (*PredictResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Predict not implemented")
+}
+func (UnimplementedInferenceServiceServer) Ready(context.Context, *ReadyRequest) (*ReadyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ready not implemented")
+}
+func (UnimplementedInferenceServiceServer) Bootstrap(context.Context, *BootstrapRequest) (*BootstrapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Bootstrap not implemented")
 }
 
 // UnsafeInferenceServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -82,6 +110,42 @@ func _InferenceService_Predict_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InferenceService_Ready_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InferenceServiceServer).Ready(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/aiservice.v1.InferenceService/Ready",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InferenceServiceServer).Ready(ctx, req.(*ReadyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InferenceService_Bootstrap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BootstrapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InferenceServiceServer).Bootstrap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/aiservice.v1.InferenceService/Bootstrap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InferenceServiceServer).Bootstrap(ctx, req.(*BootstrapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InferenceService_ServiceDesc is the grpc.ServiceDesc for InferenceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -92,6 +156,14 @@ var InferenceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Predict",
 			Handler:    _InferenceService_Predict_Handler,
+		},
+		{
+			MethodName: "Ready",
+			Handler:    _InferenceService_Ready_Handler,
+		},
+		{
+			MethodName: "Bootstrap",
+			Handler:    _InferenceService_Bootstrap_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
